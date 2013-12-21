@@ -37,11 +37,8 @@ class EventStoreFactory implements FactoryInterface
             $globalConfig = $appConfig['malocher.eventstore'];
         }
         
-        echo getcwd();
-        
         if (file_exists('config/eventstore.config.php')) {
             $localConfig = include 'config/eventstore.config.php';
-            print_r($localConfig);
         }
         
         $esConfig = new Configuration(array_merge($globalConfig, $localConfig));
