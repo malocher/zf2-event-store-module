@@ -4,6 +4,7 @@ php:
   - 5.5
 
 before_script:
+  - cp config/eventstore.config.php.travis config/eventstore.config.php
   - composer self-update
   - composer update
 
