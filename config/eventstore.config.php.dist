@@ -1,0 +1,11 @@
+<?php
+return array(
+    'adapter' => array(
+        'MalocherEventStoreModule\Adapter\Zf2EventStoreAdapter' => array(
+            'connection' => array(
+                'driver' => 'Pdo_Sqlite',
+                'database' => ':memory:'
+            )
+        )
+    ),
+);
