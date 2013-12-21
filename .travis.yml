@@ -8,5 +8,5 @@ before_script:
   - composer update
 
 script:
-  - php ./vendor/bin/phpunit -c ./tests/PHPUnit/.
+  - php ./vendor/bin/phpunit -c ./tests/.
 
