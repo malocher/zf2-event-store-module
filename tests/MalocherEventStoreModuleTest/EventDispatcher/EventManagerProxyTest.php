@@ -35,6 +35,7 @@ class EventManagerProxyTest extends TestCase
     protected function tearDown()
     {
         $this->eventManagerProxy->clearListeners(PostPersistEvent::NAME);
+        Bootstrap::getServiceManager()->get('SharedEventManager')->clearListeners('EventStore');
     }
 
 
