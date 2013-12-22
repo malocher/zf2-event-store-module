@@ -33,5 +33,10 @@ class EventStoreFactoryTest extends TestCase
         $eventStore = Bootstrap::getServiceManager()->get('malocher.eventstore');
         
         $this->assertInstanceOf('Malocher\EventStore\EventStore', $eventStore);
+        
+        $this->assertInstanceOf(
+            'MalocherEventStoreModule\EventDispatcher\EventManagerProxy', 
+            $eventStore->events()
+        );
     }
 }

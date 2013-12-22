@@ -43,6 +43,8 @@ class EventStoreFactory implements FactoryInterface
         
         $esConfig = new Configuration(array_merge($globalConfig, $localConfig));
         
+        $esConfig->setEventDispatcher($serviceLocator->get('malocher.eventstore.eventdispatcher'));
+        
         return new EventStore($esConfig);
     }
 

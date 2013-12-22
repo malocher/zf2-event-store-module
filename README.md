@@ -15,7 +15,7 @@ Installation of MalocherEventStoreModule uses composer. For composer documentati
 "malocher/zf2-event-store-module" : "dev-master"
 ```
 
-Then add `MalocherEventStoreModule` to your `config/application.config.php``
+Then add `MalocherEventStoreModule` to your `config/application.config.php`
 
 Installation without composer is not officially supported, and requires you to install and autoload
 the dependencies specified in the `composer.json`.
@@ -91,7 +91,7 @@ $eventStore = $serviceManager->get('malocher.eventstore');
 
 //You can listen to the eventstore.events_post_persist event to be notified 
 //when an object was changed
-$eventstore->events()->addListener(PostPersistEvent::NAME, function(PostPersistEvent $e) {
+$eventstore->events()->attach(PostPersistEvent::NAME, function(PostPersistEvent $e) {
     foreach ($e->getPersistedEvents() as $persitedEvent) {
         if ($persistedEvent instanceof \My\Event\UserNameChangedEvent) {
             $oldName = $persistedEvent->getPayload()['oldName'];
@@ -100,6 +100,49 @@ $eventstore->events()->addListener(PostPersistEvent::NAME, function(PostPersistE
         }
     }
 });
+
+$userRepository = $eventStore->getRepository('My\User');
+
+//Assuming username is the primary key 
+$user = $userRepository->find('John');
+
+$user->changeName('Malocher');
+
+$userRepository->save($user);
+
+//Output: Name changed from John to Malocher
+```
+
+## ZF2 integration
+
+In the last example we've shown how to listen to the PostPersistEvent of the EventStore.
+We've used `$eventStore->events()->attach(...)`, which is an important difference to
+the original EventStore implementation. By default the Malocher EventStore uses 
+a Symfony EventDispatcher, but for the ZF2 version we've replaced it with an 
+ZF2 EventManagerProxy. You can add listeners the ZF2 way or the Symfony way, it's up to you. 
+The good news is, that you can work with the flexible concepts of SharedEventCollections by
+attaching a listener via ZF2 SharedEventManager.
+```php
+use Malocher\EventStore\EventStore;
+use Malocher\EventStore\StoreEvent\PostPersistEvent;
+
+//in a module bootstrap
+$sharedEventManager = $serviceManager->get('SharedEventManager');
+
+$sharedEventManager->attach(
+    'EventStore',
+    PostPersistEvent::NAME,
+    function(PostPersistEvent $e) {
+    foreach ($e->getPersistedEvents() as $persitedEvent) {
+        if ($persistedEvent instanceof \My\Event\UserNameChangedEvent) {
+            $oldName = $persistedEvent->getPayload()['oldName'];
+            $newName = $persistedEvent->getPayload()['newName'];
+            echo "Name changed from $oldName to $newName";
+        }
+    }
+);
+
+//somewhere else in your application ...
 
 $userRepository = $eventStore->getRepository('My\User');
 
