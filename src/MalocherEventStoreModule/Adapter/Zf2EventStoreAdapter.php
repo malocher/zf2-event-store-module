@@ -204,6 +204,11 @@ class Zf2EventStoreAdapter implements AdapterInterface
      */
     public function dropSchema(array $streams)
     {
+        if ($this->dbAdatper->getPlatform() instanceof Platform\Sqlite) {
+            $this->dropSqliteSchema($streams);
+            return true;
+        }
+        
         throw new \BadMethodCallException(
             sprintf(
                 'The dropSchema command is not supported for %s. Please create the schema of your own or try doctine/dbal adapter instead.',
@@ -321,7 +326,7 @@ class Zf2EventStoreAdapter implements AdapterInterface
     
     protected function createSqliteSchema(array $streams)
     {
-        $snapshot_sql = 'CREATE TABLE snapshot '
+        $snapshot_sql = 'CREATE TABLE IF NOT EXISTS snapshot '
             . '('
                 . 'id INTEGER PRIMARY KEY,'
                 . 'sourceType TEXT,'
@@ -345,5 +350,16 @@ class Zf2EventStoreAdapter implements AdapterInterface
             
             $this->dbAdatper->getDriver()->getConnection()->execute($streamSql);
         }
+    }
+    
+    protected function dropSqliteSchema(array $streams)
+    {
+        foreach ($streams as $stream) {
+            $streamSql = 'DROP TABLE IF EXISTS ' . $this->getTable($stream);
+            $this->dbAdatper->getDriver()->getConnection()->execute($streamSql);
+        }
+        
+        $snapshotSql = 'DROP TABLE IF EXISTS snapshot';
+        $this->dbAdatper->getDriver()->getConnection()->execute($snapshotSql);
     }
 }

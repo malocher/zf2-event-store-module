@@ -32,6 +32,7 @@ class Zf2EventStoreAdapterTest extends TestCase
         
         $this->zf2EventStoreAdapter = $this->getEventStoreAdapter();
         
+        $this->zf2EventStoreAdapter->dropSchema(array('User'));
         $this->zf2EventStoreAdapter->createSchema(array('User'));
     }
     
