@@ -9,6 +9,7 @@
 namespace MalocherEventStoreModule\Adapter;
 
 use Malocher\EventStore\Adapter\AdapterInterface;
+use Malocher\EventStore\Adapter\Feature\TransactionFeatureInterface;
 use Malocher\EventStore\Adapter\AdapterException;
 use Malocher\EventStore\EventSourcing\EventInterface;
 use Malocher\EventStore\EventSourcing\SnapshotEvent;
@@ -22,7 +23,7 @@ use Zend\Db\Adapter\Platform;
  * 
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class Zf2EventStoreAdapter implements AdapterInterface
+class Zf2EventStoreAdapter implements AdapterInterface, TransactionFeatureInterface
 {
     /**
      * @var ZendDbAdapter 
@@ -241,6 +242,21 @@ class Zf2EventStoreAdapter implements AdapterInterface
                 $this->dbAdatper->getPlatform()->getName()
             )
         );
+    }
+    
+    public function beginTransaction()
+    {
+        $this->dbAdatper->getDriver()->getConnection()->beginTransaction();
+    }
+
+    public function commit()
+    {
+        $this->dbAdatper->getDriver()->getConnection()->commit();
+    }
+
+    public function rollback()
+    {
+        $this->dbAdatper->getDriver()->getConnection()->rollback();
     }
     
     /**
