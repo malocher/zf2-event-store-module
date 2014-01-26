@@ -21,6 +21,11 @@ class User extends EventSourcedObject
     
     protected $email;
     
+    public function getId()
+    {
+        return parent::getId();
+    }
+    
     public function getName()
     {
         return $this->name;

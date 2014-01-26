@@ -170,6 +170,9 @@ class EventManagerProxyTest extends TestCase
         
         $user->changeName('Malocher');
         
-        return new PostPersistEvent($user, $user->getPendingEvents());
+        $decorator = new \Malocher\EventStore\EventSourcing\ProtectedAccessDecorator();
+        $decorator->manageObject($user);
+        
+        return new PostPersistEvent($user, $decorator->getPendingEvents());
     }
 }

@@ -9,8 +9,8 @@
 namespace MalocherEventStoreModule\EventDispatcher\EventDecorator;
 
 use Symfony\Component\EventDispatcher\Event as SymfonyEvent;
-use Zend\EventManager\Event as ZendEvent;
 use Malocher\EventStore\StoreEvent\PostPersistEvent;
+use Malocher\EventStore\StoreEvent\PreCommitEvent;
 /**
  * DecoratorFactory
  * 
@@ -22,6 +22,10 @@ class DecoratorFactory
     {
         if ($e instanceof PostPersistEvent) {
             return new PostPersistEventDecorator($e);
+        }
+        
+        if ($e instanceof PreCommitEvent) {
+            return new PreCommitEventDecorator($e);
         }
         
         throw new \InvalidArgumentException(

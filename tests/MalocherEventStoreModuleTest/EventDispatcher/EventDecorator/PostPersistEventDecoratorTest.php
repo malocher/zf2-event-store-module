@@ -38,7 +38,10 @@ class PostPersistEventDecoratorTest extends TestCase
         
         $user->changeName('Malocher');
         
-        $this->postPersistEvent = new PostPersistEvent($user, $user->getPendingEvents());
+        $decorator = new \Malocher\EventStore\EventSourcing\ProtectedAccessDecorator();
+        $decorator->manageObject($user);
+        
+        $this->postPersistEvent = new PostPersistEvent($user, $decorator->getPendingEvents());
         
         $this->postPersistEventDecorator = new PostPersistEventDecorator($this->postPersistEvent);
     }
